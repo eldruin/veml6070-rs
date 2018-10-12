@@ -1,12 +1,12 @@
-# Rust VEML6070 UV Light Sensor Driver [![crates.io](https://img.shields.io/crates/v/veml6070.svg)](https://crates.io/crates/veml6070) [![Docs](https://docs.rs/veml6070/badge.svg)](https://docs.rs/veml6070)
+# Rust VEML6070 UVA Light Sensor Driver [![crates.io](https://img.shields.io/crates/v/veml6070.svg)](https://crates.io/crates/veml6070) [![Docs](https://docs.rs/veml6070/badge.svg)](https://docs.rs/veml6070)
 
-This is a platform agnostic Rust driver for the VEML6070 UV light sensor,
+This is a platform agnostic Rust driver for the VEML6070 UVA light sensor,
 based on the [`embedded-hal`](https://github.com/rust-embedded/embedded-hal) traits.
 
 This driver allows you to:
 - This driver allows you to:
 - Enable/disable the sensor
-- Read the UV measurement
+- Read the UVA measurement
 - Set the integration time
 - Enable/disable ACK signal
 - Set ACK threshold value
