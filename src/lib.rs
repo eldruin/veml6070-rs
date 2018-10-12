@@ -101,8 +101,6 @@
 
 extern crate embedded_hal as hal;
 use hal::blocking::i2c::Write;
-extern crate bit_field;
-use bit_field::BitField;
 
 /// All possible errors in this crate
 #[derive(Debug)]
@@ -136,11 +134,11 @@ pub enum AckThreshold {
 struct BitFlags;
 
 impl BitFlags {
-    const SHUTDOWN   : usize = 0;
-    const IT0        : usize = 2;
-    const IT1        : usize = 3;
-    const ACK_THD    : usize = 4;
-    const ACK        : usize = 5;
+    const SHUTDOWN   : u8 = 0b0000_0001;
+    const IT0        : u8 = 0b0000_0100;
+    const IT1        : u8 = 0b0000_1000;
+    const ACK_THD    : u8 = 0b0001_0000;
+    const ACK        : u8 = 0b0010_0000;
 }
 
 struct Address;
@@ -180,26 +178,24 @@ where
 
     /// Enable the sensor.
     pub fn enable(&mut self) -> Result<(), Error<E>> {
-        let mut cmd = self.cmd;
-        cmd.set_bit(BitFlags::SHUTDOWN, false);
-        self.write_command(cmd)
+        let cmd = self.cmd;
+        self.write_command(cmd & !BitFlags::SHUTDOWN)
     }
 
     /// Disable the sensor (shutdown).
     pub fn disable(&mut self) -> Result<(), Error<E>> {
-        let mut cmd = self.cmd;
-        cmd.set_bit(BitFlags::SHUTDOWN, true);
-        self.write_command(cmd)
+        let cmd = self.cmd;
+        self.write_command(cmd | BitFlags::SHUTDOWN)
     }
 
     /// Set integration time.
     pub fn set_integration_time(&mut self, it: IntegrationTime) -> Result<(), Error<E>> {
         let mut cmd = self.cmd;
-        match it {
-            IntegrationTime::HalfT => cmd.set_bits(BitFlags::IT0..(BitFlags::IT1+1), 0b00),
-            IntegrationTime::T1    => cmd.set_bits(BitFlags::IT0..(BitFlags::IT1+1), 0b01),
-            IntegrationTime::T2    => cmd.set_bits(BitFlags::IT0..(BitFlags::IT1+1), 0b10),
-            IntegrationTime::T4    => cmd.set_bits(BitFlags::IT0..(BitFlags::IT1+1), 0b11),
+        cmd = match it {
+            IntegrationTime::HalfT => cmd & !BitFlags::IT0 & !BitFlags::IT1,
+            IntegrationTime::T1    => cmd |  BitFlags::IT0 & !BitFlags::IT1,
+            IntegrationTime::T2    => cmd & !BitFlags::IT0 |  BitFlags::IT1,
+            IntegrationTime::T4    => cmd |  BitFlags::IT0 |  BitFlags::IT1,
         };
         self.write_command(cmd)
     }
@@ -208,23 +204,20 @@ where
     ///
     /// *Note:* The ACK must be cleared every time after it has fired with `clear_ack()`.
     pub fn enable_ack(&mut self) -> Result<(), Error<E>> {
-        let mut cmd = self.cmd;
-        cmd.set_bit(BitFlags::ACK, true);
-        self.write_command(cmd)
+        let cmd = self.cmd;
+        self.write_command(cmd | BitFlags::ACK)
     }
 
     /// Disable the ACK signal.
     pub fn disable_ack(&mut self) -> Result<(), Error<E>> {
-        let mut cmd = self.cmd;
-        cmd.set_bit(BitFlags::ACK, false);
-        self.write_command(cmd)
+        let cmd = self.cmd;
+        self.write_command(cmd & !BitFlags::ACK)
     }
 
     /// Set ACK threshold.
     pub fn set_ack_threshold(&mut self, threshold: AckThreshold) -> Result<(), Error<E>> {
-        let mut cmd = self.cmd;
-        handle_ack_threshold_bit(&mut cmd, threshold);
-        self.write_command(cmd)
+        let cmd = self.cmd;
+        self.write_command(handle_ack_threshold_bit(cmd, threshold))
     }
 
     /// Enable the ACK signal and set the ACK threshold at once.
@@ -232,9 +225,8 @@ where
     /// *Note:* The ACK must be cleared every time after it has fired with `clear_ack()`.
     pub fn enable_ack_with_threshold(&mut self, threshold: AckThreshold) -> Result<(), Error<E>> {
         let mut cmd = self.cmd;
-        cmd.set_bit(BitFlags::ACK, true);
-        handle_ack_threshold_bit(&mut cmd, threshold);
-        self.write_command(cmd)
+        cmd |= BitFlags::ACK;
+        self.write_command(handle_ack_threshold_bit(cmd, threshold))
     }
 
     fn write_command(&mut self, cmd: u8) -> Result<(), Error<E>> {
@@ -246,11 +238,11 @@ where
     }
 }
 
-fn handle_ack_threshold_bit(cmd: &mut u8, threshold: AckThreshold) {
+fn handle_ack_threshold_bit(cmd: u8, threshold: AckThreshold) -> u8 {
     match threshold {
-        AckThreshold::Steps102 => cmd.set_bit(BitFlags::ACK_THD, false),
-        AckThreshold::Steps145 => cmd.set_bit(BitFlags::ACK_THD, true),
-    };
+        AckThreshold::Steps102 => cmd & !BitFlags::ACK_THD,
+        AckThreshold::Steps145 => cmd | BitFlags::ACK_THD,
+    }
 }
 
 impl<I2C, E> VEML6070<I2C>
