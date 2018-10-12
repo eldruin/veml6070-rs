@@ -6,7 +6,7 @@ repository = "https://github.com/eldruin/veml6070-rs"
 license = "MIT OR Apache-2.0"
 description = "Platform-agnostic Rust driver for the VEML6070 UV light sensor."
 readme = "README.md"
-keywords = ["uv", "light", "sensor", "i2c", "driver", "embedded-hal-driver"]
+keywords = ["light", "sensor", "i2c", "driver", "embedded-hal-driver"]
 categories = ["embedded", "hardware-support", "no-std"]
 include = [
     "**/*.rs",
