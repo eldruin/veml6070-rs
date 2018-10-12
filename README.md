@@ -4,7 +4,6 @@ This is a platform agnostic Rust driver for the VEML6070 UVA light sensor,
 based on the [`embedded-hal`](https://github.com/rust-embedded/embedded-hal) traits.
 
 This driver allows you to:
-- This driver allows you to:
 - Enable/disable the sensor
 - Read the UVA measurement
 - Set the integration time
