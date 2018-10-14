@@ -20,6 +20,10 @@ include = [
     "LICENSE-APACHE",
 ]
 
+[badges.travis-ci]
+branch = "master"
+repository = "eldruin/veml6070-rs"
+
 [dependencies]
 embedded-hal = "0.2"
 
