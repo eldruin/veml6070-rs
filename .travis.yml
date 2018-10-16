@@ -7,6 +7,27 @@ matrix:
     - env: TARGET=x86_64-unknown-linux-gnu
       rust: nightly
 
+    - env: TARGET=x86_64-unknown-linux-musl
+      rust: nightly
+
+    # Raspberry Pi 1
+    - env: TARGET=arm-unknown-linux-gnueabi
+      rust: nightly
+
+    # Raspberry Pi 2, 3, etc
+    - env: TARGET=armv7-unknown-linux-gnueabihf
+      rust: nightly
+
+    # Bare metal
+    - env: TARGET=thumbv6m-none-eabi
+      rust: nightly
+    - env: TARGET=thumbv7em-none-eabi
+      rust: nightly
+    - env: TARGET=thumbv7em-none-eabihf
+      rust: nightly
+    - env: TARGET=thumbv7m-none-eabi
+      rust: nightly
+
 before_install: set -e
 
 install:
