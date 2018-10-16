@@ -1,4 +1,4 @@
-set -euxo pipefail
+set -exo pipefail
 
 main() {
     if [[ ! $TARGET =~ .*linux.* ]]; then
