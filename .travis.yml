@@ -11,11 +11,11 @@ matrix:
       rust: nightly
 
     # Raspberry Pi 1
-    - env: TARGET=arm-unknown-linux-gnueabi DISABLE_EXAMPLES=1
+    - env: TARGET=arm-unknown-linux-gnueabi DISABLE_EXAMPLES=1 DISABLE_TESTS=1
       rust: nightly
 
     # Raspberry Pi 2, 3, etc
-    - env: TARGET=armv7-unknown-linux-gnueabihf DISABLE_EXAMPLES=1
+    - env: TARGET=armv7-unknown-linux-gnueabihf DISABLE_EXAMPLES=1 DISABLE_TESTS=1
       rust: nightly
 
     # Bare metal
