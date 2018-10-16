@@ -8,16 +8,12 @@ main() {
 
     cargo check --target $TARGET
     cargo build --target $TARGET --release
-    if [ -z $DISABLE_EXAMPLES ]; then
-        if [[ $TARGET =~ .*linux.* ]]; then
-            cargo build --target $TARGET --examples
-        fi
+    if [ -z $DISABLE_EXAMPLES ] && [[ $TARGET =~ .*linux.* ]]; then
+        cargo build --target $TARGET --examples
     fi
 
-    if [ $TRAVIS_RUST_VERSION = nightly ]; then
-        if [[ $TARGET =~ .*linux.* ]]; then
-            cargo test --target $TARGET
-        fi
+    if [ -z $DISABLE_TESTS ] && [ $TRAVIS_RUST_VERSION = nightly ] && [[ $TARGET =~ .*linux.* ]]; then
+        cargo test --target $TARGET
     fi
 }
 
