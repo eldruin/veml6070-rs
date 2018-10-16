@@ -20,13 +20,13 @@ matrix:
 
     # Bare metal
     - env: TARGET=thumbv6m-none-eabi
-      rust: nightly
+      rust: beta
     - env: TARGET=thumbv7em-none-eabi
-      rust: nightly
+      rust: beta
     - env: TARGET=thumbv7em-none-eabihf
-      rust: nightly
+      rust: beta
     - env: TARGET=thumbv7m-none-eabi
-      rust: nightly
+      rust: beta
 
 before_install:
   - set -e
