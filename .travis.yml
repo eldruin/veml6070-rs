@@ -28,7 +28,9 @@ matrix:
     - env: TARGET=thumbv7m-none-eabi
       rust: nightly
 
-before_install: set -e
+before_install:
+  - set -e
+  - rustup self update
 
 install:
   - bash ci/install.sh
