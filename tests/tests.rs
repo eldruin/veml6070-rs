@@ -1,6 +1,6 @@
 extern crate veml6070;
 extern crate embedded_hal_mock as hal;
-use veml6070::{ VEML6070, IntegrationTime, AckThreshold };
+use veml6070::{ Veml6070, IntegrationTime, AckThreshold };
 
 struct Address;
 
@@ -12,13 +12,13 @@ impl Address {
 const DEFAULT_CMD  : u8 = 0x02;
 
 
-fn setup<'a>(data: &'a[u8]) -> VEML6070<hal::I2cMock<'a>> {
+fn setup<'a>(data: &'a[u8]) -> Veml6070<hal::I2cMock<'a>> {
     let mut dev = hal::I2cMock::new();
     dev.set_read_data(&data);
-    VEML6070::new(dev)
+    Veml6070::new(dev)
 }
 
-fn check_sent_data(sensor: VEML6070<hal::I2cMock>, address: u8, data: &[u8]) {
+fn check_sent_data(sensor: Veml6070<hal::I2cMock>, address: u8, data: &[u8]) {
     let dev = sensor.destroy();
     assert_eq!(dev.get_last_address(), Some(address));
     assert_eq!(dev.get_write_data(), &data[..]);

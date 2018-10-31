@@ -45,11 +45,11 @@
 //! extern crate veml6070;
 //!
 //! use hal::I2cdev;
-//! use veml6070::VEML6070;
+//! use veml6070::Veml6070;
 //!
 //! # fn main() {
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
-//! let mut uv_light_sensor = VEML6070::new(dev);
+//! let mut uv_light_sensor = Veml6070::new(dev);
 //! // initialization step is necessary
 //! uv_light_sensor.init().unwrap();
 //! uv_light_sensor.enable().unwrap();
@@ -64,11 +64,11 @@
 //! extern crate veml6070;
 //!
 //! use hal::I2cdev;
-//! use veml6070::{ VEML6070, IntegrationTime };
+//! use veml6070::{ Veml6070, IntegrationTime };
 //!
 //! # fn main() {
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
-//! let mut uv_light_sensor = VEML6070::new(dev);
+//! let mut uv_light_sensor = Veml6070::new(dev);
 //! // initialization step is necessary
 //! uv_light_sensor.init().unwrap();
 //! uv_light_sensor.enable().unwrap();
@@ -83,11 +83,11 @@
 //! extern crate veml6070;
 //!
 //! use hal::I2cdev;
-//! use veml6070::{ VEML6070, AckThreshold };
+//! use veml6070::{ Veml6070, AckThreshold };
 //!
 //! # fn main() {
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
-//! let mut uv_light_sensor = VEML6070::new(dev);
+//! let mut uv_light_sensor = Veml6070::new(dev);
 //! // initialization step is necessary
 //! uv_light_sensor.init().unwrap();
 //! uv_light_sensor.enable().unwrap();
@@ -152,20 +152,20 @@ impl Address {
 
 /// VEML6070 device driver.
 #[derive(Debug, Default)]
-pub struct VEML6070<I2C> {
+pub struct Veml6070<I2C> {
     /// The concrete I²C device implementation.
     i2c: I2C,
     /// Command register status.
     cmd: u8,
 }
 
-impl<I2C, E> VEML6070<I2C>
+impl<I2C, E> Veml6070<I2C>
 where
     I2C: Write<Error = E>
 {
     /// Create new instance of the VEML6070 device.
     pub fn new(i2c: I2C) -> Self {
-        VEML6070 {
+        Veml6070 {
             i2c,
             cmd : 0x02
         }
@@ -245,7 +245,7 @@ fn handle_ack_threshold_bit(cmd: u8, threshold: AckThreshold) -> u8 {
     }
 }
 
-impl<I2C, E> VEML6070<I2C>
+impl<I2C, E> Veml6070<I2C>
 where
     I2C: hal::blocking::i2c::Read<Error = E>
 {
@@ -274,7 +274,7 @@ where
     }
 }
 
-impl<I2C, E> VEML6070<I2C>
+impl<I2C, E> Veml6070<I2C>
 where
     I2C: hal::blocking::i2c::Read<Error = E> + Write<Error = E>
 {
