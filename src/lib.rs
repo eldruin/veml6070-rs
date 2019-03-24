@@ -270,7 +270,7 @@ where
         self.i2c
             .read(Address::DATA_LSB, &mut lsb)
             .map_err(Error::I2C)?;
-        Ok((msb[0] as u16) << 8 | lsb[0] as u16)
+        Ok(u16::from(msb[0]) << 8 | u16::from(lsb[0]))
     }
 }
 
