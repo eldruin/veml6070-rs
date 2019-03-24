@@ -40,6 +40,11 @@ Datasheet:
 Application note:
 - [VEML6070 AN](https://www.vishay.com/docs/84310/designingveml6070.pdf)
 
+## Support
+
+For questions, issues, feature requests, and other changes, please file an
+[issue in the github project](https://github.com/eldruin/veml6070-rs/issues).
+
 ## License
 
 Licensed under either of
