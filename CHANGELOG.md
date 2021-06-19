@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - [breaking-change] Renamed VEML6070 -> Veml6070 to comply with Rust naming conventions.
+- [breaking-change] Remove deriving `Default` for `Veml6070`.
 - Removed `bit_field` dependency
 - Make types `AckThreshold` and `IntegrationTime` `Copy` and `PartialEq`.
 

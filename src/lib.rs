@@ -143,7 +143,7 @@ impl Address {
 }
 
 /// VEML6070 device driver.
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Veml6070<I2C> {
     /// The concrete I²C device implementation.
     i2c: I2C,
