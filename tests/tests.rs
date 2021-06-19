@@ -1,5 +1,6 @@
 extern crate embedded_hal_mock as hal;
 extern crate veml6070;
+use hal::i2c::{Mock as I2cMock, Transaction as I2cTrans};
 use veml6070::{AckThreshold, IntegrationTime, Veml6070};
 
 struct Address;
@@ -7,67 +8,71 @@ struct Address;
 impl Address {
     const ARA: u8 = 0x0C;
     const COMMAND: u8 = 0x38;
+    const DATA_MSB: u8 = 0x39;
     const DATA_LSB: u8 = 0x38;
 }
 const DEFAULT_CMD: u8 = 0x02;
 
-fn setup<'a>(data: &'a [u8]) -> Veml6070<hal::I2cMock<'a>> {
-    let mut dev = hal::I2cMock::new();
-    dev.set_read_data(&data);
-    Veml6070::new(dev)
+fn new(transactions: &[I2cTrans]) -> Veml6070<I2cMock> {
+    Veml6070::new(I2cMock::new(transactions))
 }
 
-fn check_sent_data(sensor: Veml6070<hal::I2cMock>, address: u8, data: &[u8]) {
-    let dev = sensor.destroy();
-    assert_eq!(dev.get_last_address(), Some(address));
-    assert_eq!(dev.get_write_data(), &data[..]);
+fn destroy(dev: Veml6070<I2cMock>) {
+    dev.destroy().done();
 }
 
 #[test]
 fn can_clear_ack() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::read(Address::ARA, vec![0])]);
     dev.clear_ack().unwrap();
-    let i2c = dev.destroy();
-    assert_eq!(i2c.get_last_address(), Some(Address::ARA));
+    destroy(dev);
 }
 
 #[test]
 fn can_init() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[
+        I2cTrans::read(Address::ARA, vec![0]),
+        I2cTrans::write(Address::COMMAND, vec![DEFAULT_CMD]),
+    ]);
     dev.init().unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD]);
+    destroy(dev);
 }
 
 #[test]
 fn can_enable() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(Address::COMMAND, vec![DEFAULT_CMD])]);
     dev.enable().unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD]);
+    destroy(dev);
 }
 
 #[test]
 fn can_disable() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(Address::COMMAND, vec![DEFAULT_CMD | 1])]);
     dev.disable().unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | 1]);
+    destroy(dev);
 }
 
 #[test]
 fn can_read_uv() {
-    let mut dev = setup(&[0xAB, 0xCD]);
+    let mut dev = new(&[
+        I2cTrans::read(Address::DATA_MSB, vec![0xAB]),
+        I2cTrans::read(Address::DATA_LSB, vec![0xCD]),
+    ]);
     let reading = dev.read_uv().unwrap();
     assert_eq!(0xABCD, reading);
-    let i2c = dev.destroy();
-    assert_eq!(i2c.get_last_address(), Some(Address::DATA_LSB));
+    destroy(dev);
 }
 
 macro_rules! it_test {
     ( $test_name:ident, $it:expr, $expected:expr ) => {
         #[test]
         fn $test_name() {
-            let mut dev = setup(&[0]);
+            let mut dev = new(&[I2cTrans::write(
+                Address::COMMAND,
+                vec![DEFAULT_CMD | $expected << 2],
+            )]);
             dev.set_integration_time($it).unwrap();
-            check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | $expected << 2]);
+            destroy(dev);
         }
     };
 }
@@ -79,36 +84,45 @@ it_test!(can_set_integration_time_4_t, IntegrationTime::T4, 3);
 
 #[test]
 fn can_enable_ack() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(
+        Address::COMMAND,
+        vec![DEFAULT_CMD | 0b0010_0000],
+    )]);
     dev.enable_ack().unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | 0b0010_0000]);
+    destroy(dev);
 }
 
 #[test]
 fn can_disable_ack() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(Address::COMMAND, vec![DEFAULT_CMD])]);
     dev.disable_ack().unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD]);
+    destroy(dev);
 }
 
 #[test]
 fn can_set_ack_threshold_102_steps() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(Address::COMMAND, vec![DEFAULT_CMD])]);
     dev.set_ack_threshold(AckThreshold::Steps102).unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD]);
+    destroy(dev);
 }
 
 #[test]
 fn can_set_ack_threshold_145_steps() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(
+        Address::COMMAND,
+        vec![DEFAULT_CMD | 0b0001_0000],
+    )]);
     dev.set_ack_threshold(AckThreshold::Steps145).unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | 0b0001_0000]);
+    destroy(dev);
 }
 
 #[test]
 fn can_enable_ack_with_threshold_145_steps() {
-    let mut dev = setup(&[0]);
+    let mut dev = new(&[I2cTrans::write(
+        Address::COMMAND,
+        vec![DEFAULT_CMD | 0b0011_0000],
+    )]);
     dev.enable_ack_with_threshold(AckThreshold::Steps145)
         .unwrap();
-    check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | 0b0011_0000]);
+    destroy(dev);
 }
