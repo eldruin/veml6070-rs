@@ -102,7 +102,7 @@ pub enum Error<E> {
 }
 
 /// Integration time
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum IntegrationTime {
     /// Half T
     HalfT,
@@ -115,7 +115,7 @@ pub enum IntegrationTime {
 }
 
 /// ACK threshold
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum AckThreshold {
     /// 102 steps
     Steps102,
