@@ -142,6 +142,8 @@ impl Address {
     const DATA_LSB: u8 = 0x38;
 }
 
+const DEFAULT_CMD: u8 = 0x02;
+
 /// VEML6070 device driver.
 #[derive(Debug)]
 pub struct Veml6070<I2C> {
@@ -157,7 +159,10 @@ where
 {
     /// Create new instance of the VEML6070 device.
     pub fn new(i2c: I2C) -> Self {
-        Veml6070 { i2c, cmd: 0x02 }
+        Veml6070 {
+            i2c,
+            cmd: DEFAULT_CMD,
+        }
     }
 
     /// Destroy driver instance, return I²C bus instance.
@@ -268,7 +273,6 @@ where
     /// Initialize and clear ACK.
     pub fn init(&mut self) -> Result<(), Error<E>> {
         self.clear_ack()?;
-        let cmd = 0x02; // default setting
-        self.write_command(cmd)
+        self.write_command(DEFAULT_CMD)
     }
 }

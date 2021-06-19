@@ -9,6 +9,17 @@ impl Address {
     const DATA_MSB: u8 = 0x39;
     const DATA_LSB: u8 = 0x38;
 }
+
+struct BitFlags;
+
+impl BitFlags {
+    const SHUTDOWN: u8 = 0b0000_0001;
+    const IT0: u8 = 0b0000_0100;
+    const IT1: u8 = 0b0000_1000;
+    const ACK_THD: u8 = 0b0001_0000;
+    const ACK: u8 = 0b0010_0000;
+}
+
 const DEFAULT_CMD: u8 = 0x02;
 
 fn new(transactions: &[I2cTrans]) -> Veml6070<I2cMock> {
@@ -45,7 +56,10 @@ fn can_enable() {
 
 #[test]
 fn can_disable() {
-    let mut dev = new(&[I2cTrans::write(Address::COMMAND, vec![DEFAULT_CMD | 1])]);
+    let mut dev = new(&[I2cTrans::write(
+        Address::COMMAND,
+        vec![DEFAULT_CMD | BitFlags::SHUTDOWN],
+    )]);
     dev.disable().unwrap();
     destroy(dev);
 }
@@ -67,7 +81,7 @@ macro_rules! it_test {
         fn $test_name() {
             let mut dev = new(&[I2cTrans::write(
                 Address::COMMAND,
-                vec![DEFAULT_CMD | $expected << 2],
+                vec![DEFAULT_CMD | $expected],
             )]);
             dev.set_integration_time($it).unwrap();
             destroy(dev);
@@ -76,15 +90,27 @@ macro_rules! it_test {
 }
 
 it_test!(can_set_integration_time_half_t, IntegrationTime::HalfT, 0);
-it_test!(can_set_integration_time_1_t, IntegrationTime::T1, 1);
-it_test!(can_set_integration_time_2_t, IntegrationTime::T2, 2);
-it_test!(can_set_integration_time_4_t, IntegrationTime::T4, 3);
+it_test!(
+    can_set_integration_time_1_t,
+    IntegrationTime::T1,
+    BitFlags::IT0
+);
+it_test!(
+    can_set_integration_time_2_t,
+    IntegrationTime::T2,
+    BitFlags::IT1
+);
+it_test!(
+    can_set_integration_time_4_t,
+    IntegrationTime::T4,
+    BitFlags::IT1 | BitFlags::IT0
+);
 
 #[test]
 fn can_enable_ack() {
     let mut dev = new(&[I2cTrans::write(
         Address::COMMAND,
-        vec![DEFAULT_CMD | 0b0010_0000],
+        vec![DEFAULT_CMD | BitFlags::ACK],
     )]);
     dev.enable_ack().unwrap();
     destroy(dev);
@@ -108,7 +134,7 @@ fn can_set_ack_threshold_102_steps() {
 fn can_set_ack_threshold_145_steps() {
     let mut dev = new(&[I2cTrans::write(
         Address::COMMAND,
-        vec![DEFAULT_CMD | 0b0001_0000],
+        vec![DEFAULT_CMD | BitFlags::ACK_THD],
     )]);
     dev.set_ack_threshold(AckThreshold::Steps145).unwrap();
     destroy(dev);
@@ -118,7 +144,7 @@ fn can_set_ack_threshold_145_steps() {
 fn can_enable_ack_with_threshold_145_steps() {
     let mut dev = new(&[I2cTrans::write(
         Address::COMMAND,
-        vec![DEFAULT_CMD | 0b0011_0000],
+        vec![DEFAULT_CMD | BitFlags::ACK | BitFlags::ACK_THD],
     )]);
     dev.enable_ack_with_threshold(AckThreshold::Steps145)
         .unwrap();
