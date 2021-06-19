@@ -9,11 +9,11 @@ This is a platform agnostic Rust driver for the VEML6070 UVA light sensor,
 based on the [`embedded-hal`](https://github.com/rust-embedded/embedded-hal) traits.
 
 This driver allows you to:
-- Enable/disable the sensor
-- Read the UVA measurement
-- Set the integration time
-- Enable/disable ACK signal
-- Set ACK threshold value
+- Enable/disable the sensor. See: `enable()`.
+- Read the UV measurement. See: `read_uv()`.
+- Set the integration time. See: `set_integration_time()`.
+- Enable/disable ACK signal. See: `enable_ack()`.
+- Set ACK threshold value. See: `set_ack_threshold()`.
 
 ## The device
 VEML6070 is an advanced ultraviolet (UV) light sensor with I2C protocol

@@ -4,11 +4,17 @@
 //! [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 //!
 //! This driver allows you to:
-//! - Enable/disable the sensor
-//! - Read the UV measurement
-//! - Set the integration time
-//! - Enable/disable ACK signal
-//! - Set ACK threshold value
+//! - Enable/disable the sensor. See: [`enable()`].
+//! - Read the UV measurement. See: [`read_uv()`].
+//! - Set the integration time. See: [`set_integration_time()`].
+//! - Enable/disable ACK signal. See: [`enable_ack()`].
+//! - Set ACK threshold value. See: [`set_ack_threshold()`].
+//!
+//! [`enable()`]: struct.Veml6070.html#method.enable
+//! [`read_uv()`]: struct.Veml6070.html#method.read_uv
+//! [`set_integration_time()`]: struct.Veml6070.html#method.set_integration_time
+//! [`enable_ack()`]: struct.Veml6070.html#method.enable_ack
+//! [`set_ack_threshold()`]: struct.Veml6070.html#method.set_ack_threshold
 //!
 //! ## The device
 //! VEML6070 is an advanced ultraviolet (UV) light sensor with I2C protocol
