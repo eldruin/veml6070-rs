@@ -35,6 +35,13 @@
 //!
 //! ## Usage examples (see also examples folder)
 //!
+//! To use this driver, import this crate and an `embedded_hal` implementation,
+//! then instantiate the device.
+//!
+//! Please find additional examples in this repository: [driver-examples]
+//!
+//! [driver-examples]: https://github.com/eldruin/driver-examples
+//!
 //! ### Read UV
 //!
 //! Import this crate and an `embedded_hal` implementation, then instantiate
