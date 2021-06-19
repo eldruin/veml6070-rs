@@ -87,6 +87,7 @@
 //! uv_light_sensor.enable_ack_with_threshold(AckThreshold::Steps145).unwrap();
 //! ```
 
+#![doc(html_root_url = "https://docs.rs/veml6070/0.1.0")]
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
 #![no_std]
