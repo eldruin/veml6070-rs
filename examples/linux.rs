@@ -1,7 +1,3 @@
-extern crate embedded_hal;
-extern crate linux_embedded_hal;
-extern crate veml6070;
-
 use linux_embedded_hal::I2cdev;
 use veml6070::Veml6070;
 

@@ -1,6 +1,4 @@
-extern crate embedded_hal_mock as hal;
-extern crate veml6070;
-use hal::i2c::{Mock as I2cMock, Transaction as I2cTrans};
+use embedded_hal_mock::i2c::{Mock as I2cMock, Transaction as I2cTrans};
 use veml6070::{AckThreshold, IntegrationTime, Veml6070};
 
 struct Address;

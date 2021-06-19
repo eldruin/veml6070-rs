@@ -41,66 +41,50 @@
 //! the device:
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6070;
-//!
-//! use hal::I2cdev;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6070::Veml6070;
 //!
-//! # fn main() {
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut uv_light_sensor = Veml6070::new(dev);
 //! // initialization step is necessary
 //! uv_light_sensor.init().unwrap();
 //! uv_light_sensor.enable().unwrap();
 //! let _uv_reading = uv_light_sensor.read_uv().unwrap();
-//! # }
 //! ```
 //!
 //! ### Set integration time
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6070;
+//! use linux_embedded_hal::I2cdev;
+//! use veml6070::{Veml6070, IntegrationTime};
 //!
-//! use hal::I2cdev;
-//! use veml6070::{ Veml6070, IntegrationTime };
-//!
-//! # fn main() {
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut uv_light_sensor = Veml6070::new(dev);
 //! // initialization step is necessary
 //! uv_light_sensor.init().unwrap();
 //! uv_light_sensor.enable().unwrap();
 //! uv_light_sensor.set_integration_time(IntegrationTime::T1).unwrap();
-//! # }
 //! ```
 //!
 //! ### Enable ACK and set a threshold of 145 steps
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6070;
+//! use linux_embedded_hal::I2cdev;
+//! use veml6070::{Veml6070, AckThreshold};
 //!
-//! use hal::I2cdev;
-//! use veml6070::{ Veml6070, AckThreshold };
-//!
-//! # fn main() {
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut uv_light_sensor = Veml6070::new(dev);
 //! // initialization step is necessary
 //! uv_light_sensor.init().unwrap();
 //! uv_light_sensor.enable().unwrap();
 //! uv_light_sensor.enable_ack_with_threshold(AckThreshold::Steps145).unwrap();
-//! # }
 //! ```
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
 #![no_std]
 
-extern crate embedded_hal as hal;
-use hal::blocking::i2c::Write;
+use embedded_hal::blocking::i2c;
 
 /// All possible errors in this crate
 #[derive(Debug)]
@@ -161,7 +145,7 @@ pub struct Veml6070<I2C> {
 
 impl<I2C, E> Veml6070<I2C>
 where
-    I2C: Write<Error = E>,
+    I2C: i2c::Write<Error = E>,
 {
     /// Create new instance of the VEML6070 device.
     pub fn new(i2c: I2C) -> Self {
@@ -244,7 +228,7 @@ fn handle_ack_threshold_bit(cmd: u8, threshold: AckThreshold) -> u8 {
 
 impl<I2C, E> Veml6070<I2C>
 where
-    I2C: hal::blocking::i2c::Read<Error = E>,
+    I2C: i2c::Read<Error = E>,
 {
     /// Clear ACK status.
     ///
@@ -271,7 +255,7 @@ where
 
 impl<I2C, E> Veml6070<I2C>
 where
-    I2C: hal::blocking::i2c::Read<Error = E> + Write<Error = E>,
+    I2C: i2c::Read<Error = E> + i2c::Write<Error = E>,
 {
     /// Initialize and clear ACK.
     pub fn init(&mut self) -> Result<(), Error<E>> {
