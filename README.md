@@ -38,6 +38,30 @@ Datasheet:
 Application note:
 - [VEML6070 AN](https://www.vishay.com/docs/84310/designingveml6070.pdf)
 
+## Usage example
+
+To use this driver, import this crate and an `embedded_hal` implementation,
+then instantiate the device.
+
+Please find additional examples in this repository: [driver-examples]
+
+[driver-examples]: https://github.com/eldruin/driver-examples
+
+```rust
+use linux_embedded_hal::I2cdev;
+use veml6070::Veml6070;
+
+fn main() {
+    let dev = I2cdev::new("/dev/i2c-1").unwrap();
+    let mut uv_light_sensor = Veml6070::new(dev);
+    // initialization step is necessary
+    uv_light_sensor.init().unwrap();
+    uv_light_sensor.enable().unwrap();
+    let reading = uv_light_sensor.read_uv().unwrap();
+    println!("UV reading: {}", reading);
+}
+```
+
 ## Support
 
 For questions, issues, feature requests, and other changes, please file an
