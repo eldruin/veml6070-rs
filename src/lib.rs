@@ -119,7 +119,7 @@ pub enum IntegrationTime {
     /// 2 T
     T2,
     /// 4 T
-    T4
+    T4,
 }
 
 /// ACK threshold
@@ -134,20 +134,20 @@ pub enum AckThreshold {
 struct BitFlags;
 
 impl BitFlags {
-    const SHUTDOWN   : u8 = 0b0000_0001;
-    const IT0        : u8 = 0b0000_0100;
-    const IT1        : u8 = 0b0000_1000;
-    const ACK_THD    : u8 = 0b0001_0000;
-    const ACK        : u8 = 0b0010_0000;
+    const SHUTDOWN: u8 = 0b0000_0001;
+    const IT0: u8 = 0b0000_0100;
+    const IT1: u8 = 0b0000_1000;
+    const ACK_THD: u8 = 0b0001_0000;
+    const ACK: u8 = 0b0010_0000;
 }
 
 struct Address;
 
 impl Address {
-    const ARA      : u8 = 0x0C;
-    const COMMAND  : u8 = 0x38;
-    const DATA_MSB : u8 = 0x39;
-    const DATA_LSB : u8 = 0x38;
+    const ARA: u8 = 0x0C;
+    const COMMAND: u8 = 0x38;
+    const DATA_MSB: u8 = 0x39;
+    const DATA_LSB: u8 = 0x38;
 }
 
 /// VEML6070 device driver.
@@ -161,14 +161,11 @@ pub struct Veml6070<I2C> {
 
 impl<I2C, E> Veml6070<I2C>
 where
-    I2C: Write<Error = E>
+    I2C: Write<Error = E>,
 {
     /// Create new instance of the VEML6070 device.
     pub fn new(i2c: I2C) -> Self {
-        Veml6070 {
-            i2c,
-            cmd : 0x02
-        }
+        Veml6070 { i2c, cmd: 0x02 }
     }
 
     /// Destroy driver instance, return I²C bus instance.
@@ -193,9 +190,9 @@ where
         let mut cmd = self.cmd;
         cmd = match it {
             IntegrationTime::HalfT => cmd & !BitFlags::IT0 & !BitFlags::IT1,
-            IntegrationTime::T1    => cmd |  BitFlags::IT0 & !BitFlags::IT1,
-            IntegrationTime::T2    => cmd & !BitFlags::IT0 |  BitFlags::IT1,
-            IntegrationTime::T4    => cmd |  BitFlags::IT0 |  BitFlags::IT1,
+            IntegrationTime::T1 => cmd | BitFlags::IT0 & !BitFlags::IT1,
+            IntegrationTime::T2 => cmd & !BitFlags::IT0 | BitFlags::IT1,
+            IntegrationTime::T4 => cmd | BitFlags::IT0 | BitFlags::IT1,
         };
         self.write_command(cmd)
     }
@@ -247,7 +244,7 @@ fn handle_ack_threshold_bit(cmd: u8, threshold: AckThreshold) -> u8 {
 
 impl<I2C, E> Veml6070<I2C>
 where
-    I2C: hal::blocking::i2c::Read<Error = E>
+    I2C: hal::blocking::i2c::Read<Error = E>,
 {
     /// Clear ACK status.
     ///
@@ -255,9 +252,7 @@ where
     /// Other registers will be blocked otherwise.
     pub fn clear_ack(&mut self) -> Result<(), Error<E>> {
         let mut buffer = [0];
-        self.i2c
-            .read(Address::ARA, &mut buffer)
-            .map_err(Error::I2C)
+        self.i2c.read(Address::ARA, &mut buffer).map_err(Error::I2C)
     }
 
     /// Read the UV sensor.
@@ -276,7 +271,7 @@ where
 
 impl<I2C, E> Veml6070<I2C>
 where
-    I2C: hal::blocking::i2c::Read<Error = E> + Write<Error = E>
+    I2C: hal::blocking::i2c::Read<Error = E> + Write<Error = E>,
 {
     /// Initialize and clear ACK.
     pub fn init(&mut self) -> Result<(), Error<E>> {
@@ -285,4 +280,3 @@ where
         self.write_command(cmd)
     }
 }
-

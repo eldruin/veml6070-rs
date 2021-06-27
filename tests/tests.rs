@@ -1,18 +1,17 @@
-extern crate veml6070;
 extern crate embedded_hal_mock as hal;
-use veml6070::{ Veml6070, IntegrationTime, AckThreshold };
+extern crate veml6070;
+use veml6070::{AckThreshold, IntegrationTime, Veml6070};
 
 struct Address;
 
 impl Address {
-    const ARA      : u8 = 0x0C;
-    const COMMAND  : u8 = 0x38;
-    const DATA_LSB : u8 = 0x38;
+    const ARA: u8 = 0x0C;
+    const COMMAND: u8 = 0x38;
+    const DATA_LSB: u8 = 0x38;
 }
-const DEFAULT_CMD  : u8 = 0x02;
+const DEFAULT_CMD: u8 = 0x02;
 
-
-fn setup<'a>(data: &'a[u8]) -> Veml6070<hal::I2cMock<'a>> {
+fn setup<'a>(data: &'a [u8]) -> Veml6070<hal::I2cMock<'a>> {
     let mut dev = hal::I2cMock::new();
     dev.set_read_data(&data);
     Veml6070::new(dev)
@@ -70,13 +69,13 @@ macro_rules! it_test {
             dev.set_integration_time($it).unwrap();
             check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | $expected << 2]);
         }
-    }
+    };
 }
 
 it_test!(can_set_integration_time_half_t, IntegrationTime::HalfT, 0);
-it_test!(can_set_integration_time_1_t,    IntegrationTime::T1,    1);
-it_test!(can_set_integration_time_2_t,    IntegrationTime::T2,    2);
-it_test!(can_set_integration_time_4_t,    IntegrationTime::T4,    3);
+it_test!(can_set_integration_time_1_t, IntegrationTime::T1, 1);
+it_test!(can_set_integration_time_2_t, IntegrationTime::T2, 2);
+it_test!(can_set_integration_time_4_t, IntegrationTime::T4, 3);
 
 #[test]
 fn can_enable_ack() {
@@ -91,7 +90,6 @@ fn can_disable_ack() {
     dev.disable_ack().unwrap();
     check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD]);
 }
-
 
 #[test]
 fn can_set_ack_threshold_102_steps() {
@@ -110,6 +108,7 @@ fn can_set_ack_threshold_145_steps() {
 #[test]
 fn can_enable_ack_with_threshold_145_steps() {
     let mut dev = setup(&[0]);
-    dev.enable_ack_with_threshold(AckThreshold::Steps145).unwrap();
+    dev.enable_ack_with_threshold(AckThreshold::Steps145)
+        .unwrap();
     check_sent_data(dev, Address::COMMAND, &[DEFAULT_CMD | 0b0011_0000]);
 }
