@@ -2,10 +2,8 @@
 
 [![crates.io](https://img.shields.io/crates/v/veml6070.svg)](https://crates.io/crates/veml6070)
 [![Docs](https://docs.rs/veml6070/badge.svg)](https://docs.rs/veml6070)
-[![Build Status](https://travis-ci.org/eldruin/veml6070-rs.svg?branch=master)](https://travis-ci.org/eldruin/veml6070-rs)
+[![Build Status](https://github.com/eldruin/veml6070-rs/workflows/Build/badge.svg)](https://github.com/eldruin/veml6070-rs/actions?query=workflow%3ABuild)
 [![Coverage Status](https://coveralls.io/repos/github/eldruin/veml6070-rs/badge.svg?branch=master)](https://coveralls.io/github/eldruin/veml6070-rs?branch=master)
-![Maintenance Intention](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
-
 
 This is a platform agnostic Rust driver for the VEML6070 UVA light sensor,
 based on the [`embedded-hal`](https://github.com/rust-embedded/embedded-hal) traits.
